@@ -10,43 +10,48 @@ export function solveBacktracking(nodes, edges, startNodeId) {
   const steps = [];
   const MAX_STEPS = 15000;
   let stepsExplored = 0;
-  let solution = null;
   let limitExceeded = false;
 
   const adj = buildAdjList(coercedNodes, coercedEdges);
   const path = [startNode];
   const visited = new Set([startNode]);
 
+  const solutions = [];
+
   // Initial step
   steps.push({ type: 'visit', path: [...path], edge: null });
   stepsExplored++;
 
   function dfs(u) {
-    if (solution || limitExceeded) return false;
+    if (limitExceeded) return false;
     if (steps.length >= MAX_STEPS) {
       limitExceeded = true;
       return false;
     }
 
-    if (path.length === nodes.length) {
+    if (path.length === coercedNodes.length) {
+      const solutionIndex = steps.length;
       steps.push({ type: 'solution', path: [...path], edge: null });
-      solution = [...path];
+      solutions.push({ path: [...path], stepIndex: solutionIndex });
       stepsExplored++;
-      return true;
+      
+      if (solutions.length >= 25) {
+        limitExceeded = true;
+      }
+      return false; // return false to force backtracking and continue searching
     }
 
     const neighbors = Array.from(adj[u] || []);
     const unvisitedNeighbors = neighbors.filter(v => !visited.has(v));
 
     if (unvisitedNeighbors.length === 0) {
-      // No unvisited neighbors, but we haven't visited all nodes -> Dead end
       steps.push({ type: 'dead_end', path: [...path], edge: null });
       stepsExplored++;
       return false;
     }
 
     for (const v of unvisitedNeighbors) {
-      if (steps.length >= MAX_STEPS) {
+      if (limitExceeded || steps.length >= MAX_STEPS) {
         limitExceeded = true;
         return false;
       }
@@ -56,12 +61,9 @@ export function solveBacktracking(nodes, edges, startNodeId) {
       steps.push({ type: 'visit', path: [...path], edge: [u, v] });
       stepsExplored++;
 
-      if (dfs(v)) {
-        return true;
-      }
+      dfs(v);
 
-      // Backtrack
-      if (steps.length >= MAX_STEPS) {
+      if (limitExceeded || steps.length >= MAX_STEPS) {
         limitExceeded = true;
         return false;
       }
@@ -74,10 +76,10 @@ export function solveBacktracking(nodes, edges, startNodeId) {
     return false;
   }
 
-  if (nodes.length > 0) {
-    if (nodes.length === 1) {
+  if (coercedNodes.length > 0) {
+    if (coercedNodes.length === 1) {
       steps.push({ type: 'solution', path: [startNode], edge: null });
-      solution = [startNode];
+      solutions.push({ path: [startNode], stepIndex: 0 });
     } else {
       dfs(startNode);
     }
@@ -87,7 +89,8 @@ export function solveBacktracking(nodes, edges, startNodeId) {
 
   return {
     steps,
-    solution,
+    solution: solutions[0]?.path || null,
+    solutions,
     timeTaken: endTime - startTime,
     stepsExplored,
     limitExceeded

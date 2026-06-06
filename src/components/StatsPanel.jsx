@@ -5,7 +5,9 @@ export default function StatsPanel({
   selectedAlgo,
   stats,
   currentStepData,
-  solutionFound
+  solutionFound,
+  currentStep,
+  onSelectSolution
 }) {
   const { bruteforce, backtracking } = stats || {};
 
@@ -75,7 +77,7 @@ export default function StatsPanel({
 
   const renderSingleStats = (name, data) => {
     if (!data) return null;
-    const { stepsExplored, timeTaken, limitExceeded, solution } = data;
+    const { stepsExplored, timeTaken, limitExceeded, solution, solutions = [] } = data;
 
     return (
       <div className="flex-1 flex flex-col gap-4">
@@ -106,8 +108,8 @@ export default function StatsPanel({
           <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-3">
             <div className={`p-2.5 rounded-lg border ${
               solution
-                ? 'bg-emerald-50 border-emerald-250 text-emerald-650'
-                : 'bg-red-50 border-red-250 text-red-650'
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-650'
+                : 'bg-red-50 border-red-200 text-red-650'
             }`}>
               {solution ? <CheckCircle className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
             </div>
@@ -136,6 +138,33 @@ export default function StatsPanel({
             </div>
           </div>
         </div>
+
+        {/* Alternative Solutions Selector */}
+        {solutions.length > 1 && (
+          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col gap-2">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider font-bold">
+              Alternative Solutions ({solutions.length} found)
+            </span>
+            <div className="flex gap-1.5 flex-wrap">
+              {solutions.map((sol, index) => {
+                const isActive = currentStep === sol.stepIndex;
+                return (
+                  <button
+                    key={index}
+                    onClick={() => onSelectSolution && onSelectSolution(sol.stepIndex)}
+                    className={`px-2.5 py-1 text-xs font-mono font-bold rounded-lg border transition-all ${
+                      isActive
+                        ? 'bg-emerald-600 border-emerald-700 text-white shadow-sm'
+                        : 'bg-white border-slate-200 text-slate-650 hover:bg-slate-50'
+                    }`}
+                  >
+                    Path {index + 1}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Display Current Traversal State (Node Path) */}
         {currentStepData && (

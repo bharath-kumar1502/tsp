@@ -10,14 +10,15 @@ export function solveBruteForce(nodes, edges, startNodeId) {
   const steps = [];
   const MAX_STEPS = 15000;
   let stepsExplored = 0;
-  let solution = null;
   let limitExceeded = false;
   
   const nodeIds = coercedNodes.map(n => n.id);
   const otherNodes = nodeIds.filter(id => id !== startNode);
+
+  const solutions = [];
   
   function permuteAndCheck(arr, memo = []) {
-    if (solution || limitExceeded) return;
+    if (limitExceeded) return;
     
     if (arr.length === 0) {
       const fullPath = [startNode, ...memo];
@@ -26,7 +27,7 @@ export function solveBruteForce(nodes, edges, startNodeId) {
     }
     
     for (let i = 0; i < arr.length; i++) {
-      if (solution || limitExceeded) return;
+      if (limitExceeded) return;
       const current = arr[i];
       const nextArr = arr.slice(0, i).concat(arr.slice(i + 1));
       permuteAndCheck(nextArr, memo.concat(current));
@@ -67,9 +68,13 @@ export function solveBruteForce(nodes, edges, startNodeId) {
       }
     }
     
-    if (valid && currentPath.length === nodes.length) {
+    if (valid && currentPath.length === coercedNodes.length) {
+      const solutionIndex = steps.length;
       steps.push({ type: 'solution', path: [...currentPath], edge: null });
-      solution = currentPath;
+      solutions.push({ path: [...currentPath], stepIndex: solutionIndex });
+      if (solutions.length >= 25) {
+        limitExceeded = true;
+      }
       return;
     }
     
@@ -86,10 +91,10 @@ export function solveBruteForce(nodes, edges, startNodeId) {
     }
   }
   
-  if (nodes.length > 0) {
-    if (nodes.length === 1) {
+  if (coercedNodes.length > 0) {
+    if (coercedNodes.length === 1) {
       steps.push({ type: 'solution', path: [startNode], edge: null });
-      solution = [startNode];
+      solutions.push({ path: [startNode], stepIndex: 0 });
       stepsExplored++;
     } else {
       permuteAndCheck(otherNodes);
@@ -100,7 +105,8 @@ export function solveBruteForce(nodes, edges, startNodeId) {
   
   return {
     steps,
-    solution,
+    solution: solutions[0]?.path || null,
+    solutions,
     timeTaken: endTime - startTime,
     stepsExplored,
     limitExceeded

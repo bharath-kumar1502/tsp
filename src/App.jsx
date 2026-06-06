@@ -348,7 +348,11 @@ export default function App() {
       path: currentStep?.path || [],
       edge: currentStep?.edge || null,
       type: currentStep?.type || null,
-      solutionPath: (isLast && isSolved) ? stepsList[stepsList.length - 1].path : []
+      solutionPath: (currentStep?.type === 'solution') 
+        ? currentStep.path 
+        : (isLast && isSolved) 
+        ? stepsList[stepsList.length - 1].path 
+        : []
     };
   };
 
@@ -544,8 +548,13 @@ export default function App() {
           <StatsPanel
             selectedAlgo={selectedAlgo}
             stats={stats}
+            currentStep={currentStepIndex}
             currentStepData={getActiveStepData()}
             solutionFound={isSolutionFound()}
+            onSelectSolution={(stepIdx) => {
+              setIsPlaying(false);
+              setCurrentStepIndex(stepIdx);
+            }}
           />
         </div>
 
