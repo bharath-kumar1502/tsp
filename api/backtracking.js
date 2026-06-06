@@ -1,6 +1,11 @@
 import { buildAdjList } from './graphUtils.js';
 
 export function solveBacktracking(nodes, edges, startNodeId) {
+  // Coerce all IDs to numbers to prevent string vs number type mismatches
+  const coercedNodes = nodes.map(n => ({ ...n, id: Number(n.id) }));
+  const coercedEdges = edges.map(e => ({ ...e, from: Number(e.from), to: Number(e.to) }));
+  const startNode = Number(startNodeId);
+
   const startTime = performance.now();
   const steps = [];
   const MAX_STEPS = 15000;
@@ -8,8 +13,7 @@ export function solveBacktracking(nodes, edges, startNodeId) {
   let solution = null;
   let limitExceeded = false;
 
-  const startNode = Number(startNodeId);
-  const adj = buildAdjList(nodes, edges);
+  const adj = buildAdjList(coercedNodes, coercedEdges);
   const path = [startNode];
   const visited = new Set([startNode]);
 
