@@ -79,7 +79,7 @@ export default function StatsPanel({
 
     return (
       <div className="flex-1 flex flex-col gap-4">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-2 gap-4">
           {/* Card 1: Time Taken */}
           <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-3">
             <div className="p-2.5 rounded-lg bg-cyan-50 border border-cyan-200 text-cyan-600">
@@ -213,7 +213,7 @@ export default function StatsPanel({
 
       {selectedAlgo === 'both' ? (
         <div className="flex flex-col gap-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
             <div>
               <h3 className="text-xs font-black text-pink-600 uppercase tracking-widest mb-3">Brute Force</h3>
               {renderSingleStats('Brute Force', bruteforce)}
