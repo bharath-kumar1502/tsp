@@ -66,6 +66,11 @@ export default function App() {
     setStats(null);
   };
 
+  const handleSelectAlgo = (algo) => {
+    setSelectedAlgo(algo);
+    resetAnimation();
+  };
+
   const handleSelectPreset = (presetKey) => {
     setSelectedPreset(presetKey);
     resetAnimation();
@@ -521,7 +526,7 @@ export default function App() {
         <div className="w-full lg:w-[400px] flex flex-col gap-6">
           <ControlPanel
             selectedAlgo={selectedAlgo}
-            setSelectedAlgo={setSelectedAlgo}
+            setSelectedAlgo={handleSelectAlgo}
             selectedPreset={selectedPreset}
             onSelectPreset={handleSelectPreset}
             speed={speed}
