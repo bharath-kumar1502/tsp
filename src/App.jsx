@@ -43,7 +43,7 @@ export default function App() {
 
   const checkApiStatus = async () => {
     try {
-      const response = await fetch('http://localhost:5000/solve', {
+      const response = await fetch('/api/solve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nodes: [{ id: 0, x: 0, y: 0 }], edges: [], startNode: 0, algorithm: 'backtracking' })
@@ -163,7 +163,7 @@ export default function App() {
     };
 
     try {
-      const response = await fetch('http://localhost:5000/solve', {
+      const response = await fetch('/api/solve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
